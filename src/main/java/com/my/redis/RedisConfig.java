@@ -11,7 +11,7 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
-public class config {
+public class RedisConfig {
     /*
      * Redis连接工厂(redis db=0)
      */
@@ -19,6 +19,7 @@ public class config {
     public JedisConnectionFactory jedisConnectionFactory() {
         JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory();
         jedisConnectionFactory.setDatabase(0);
+        jedisConnectionFactory.afterPropertiesSet();
         return jedisConnectionFactory;
     }
 

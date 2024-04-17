@@ -28,20 +28,23 @@ public class RedisService implements IRedisService {
     @Qualifier(value = "redisTemplate")
     private RedisTemplate<String, Object> redisTemplate;
 
-
-
     protected int getDatabase(){
         return ( (JedisConnectionFactory)this.getRedisTemplate().getConnectionFactory() ).getDatabase();
     }
 
-
+    protected void setDatabase(int db){
+        JedisConnectionFactory jedisConnectionFactory = (JedisConnectionFactory)this.getRedisTemplate().getConnectionFactory();
+        jedisConnectionFactory.setDatabase(db);
+        jedisConnectionFactory.afterPropertiesSet();
+    }
 
     @Override
-    public Object get(String key) {
+    public Object get(int db, String key) {
         try {
             if (key == null) {
                 throw new RuntimeException("鍵值不能為空");
             }
+            setDatabase(db);
             Object value = getRedisTemplate().opsForValue().get(key);
             if (value != null) {
                 logger.info("成功從Redis[{}]取得鍵值[{}]", getDatabase(), key);
@@ -56,37 +59,49 @@ public class RedisService implements IRedisService {
         }
     }
 
-    @Override
-    public boolean set( String key, Object value, long time)  {
+    public Object get(String key) {
+        return get(0, key);
+    }
+
+    public boolean set( int db, String key, Object value, long time)  {
         if(key == null){throw new RuntimeException("鍵不能為空");}
         try {
+            setDatabase(db);
             if (time > 0) {
                 getRedisTemplate().opsForValue().set(key, value, time, TimeUnit.SECONDS);
                 logger.info("鍵[{}]的有效期為 {} 秒後", key, time);
             }else{
                 getRedisTemplate().opsForValue().set(key, value);
             }
-            logger.info("成功放入[{}/{}]到Redis[{}]", key, value, getDatabase());
+            logger.info("成功放入[{}:{}]到Redis[{}]", key, value, getDatabase());
             return true;
         } catch(RedisConnectionFailureException e){
             throw new RuntimeException("無法連接到redis服務器, " + e.toString());
         } catch (Exception e) {
-            logger.warn("不能放入[{}/{}]到Redis[{}]", key, value, getDatabase());
+            logger.warn("不能放入[{}:{}]到Redis[{}]", key, value, getDatabase());
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public boolean set(String key, Object value) {
-        return set(key, value, 0);
+    public boolean set( String key, Object value, long time)  {
+        return set(0, key, value, time);
     }
 
     @Override
-    public void del(String... keys) {
+    public boolean set(String key, Object value) {
+        return set(0, key, value, 0);
+    }
+
+    public boolean del(int db,  String... keys) {
         try {
+            setDatabase(db);
             if (keys != null && keys.length > 0) {
                 getRedisTemplate().delete(Arrays.asList(keys));
                 logger.info("成功從Redis[{}]中刪除鍵{}", getDatabase(), Arrays.asList(keys) );
+                return true;
+            }else{
+                throw new RuntimeException("鍵不能為空");
             }
         }catch(RedisConnectionFailureException e){
             throw new RuntimeException("無法連接到redis服務器, " + e.toString());
@@ -94,10 +109,15 @@ public class RedisService implements IRedisService {
             throw new RuntimeException(e);
         }
     }
+    @Override
+    public boolean del(String... keys) {
+        return this.del(0, keys);
+    }
 
     @Override
-    public List<String> getAllKeys(String keyPreifx){
+    public List<String> getAllKeys(int db, String keyPreifx){
         try {
+            setDatabase(db);
             StringBuffer targetKey = new StringBuffer();
             if (keyPreifx != null) {
                 targetKey.append(keyPreifx.trim());
@@ -122,6 +142,11 @@ public class RedisService implements IRedisService {
     }
 
     @Override
+    public List<String> getAllKeys(String keyPreifx){
+        return getAllKeys(0, keyPreifx);
+    }
+
+    @Override
     public boolean hasKey(String key) {
         try{
             return getRedisTemplate().hasKey(key);
@@ -131,6 +156,15 @@ public class RedisService implements IRedisService {
             throw new RuntimeException(e);
         }
     }
+
+    public  List<String> getAllKeys(int db){
+        return getAllKeys(db, null);
+    }
+
+    public List<String> getAllKeys(){
+        return getAllKeys(0);
+    }
+
 
     @Override
     public long incr(String key, long delta) {
