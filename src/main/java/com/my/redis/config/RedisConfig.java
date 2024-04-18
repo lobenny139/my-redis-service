@@ -1,4 +1,4 @@
-package com.my.redis;
+package com.my.redis.config;
 
 import com.my.redis.service.IRedisService;
 import com.my.redis.service.com.my.redis.service.provider.RedisService;
@@ -49,12 +49,5 @@ public class RedisConfig {
         return template;
     }
 
-    /**
-     * 定義redisService
-     * @return
-     */
-    @Bean(name = "redisService" )
-    public IRedisService redisService() {
-        return new RedisService();
-    }
+
 }
