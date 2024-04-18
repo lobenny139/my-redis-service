@@ -90,15 +90,47 @@ public interface IRedisService {
      * @param key
      * @return
      */
-    public boolean hasKey(String key);
+    boolean hasKey(String key);
+
+    /**
+     * 判断key是否存在
+     * @param db
+     * @param key
+     * @return
+     */
+    boolean hasKey(int db, String key);
+
+    /**
+     * 遞增
+     * @param db
+     * @param key
+     * @param delta
+     * @return 遞增後結果
+     */
+    long incr(int db, String key, long delta);
 
     /**
      * 遞增
      * @param key
      * @param delta
-     * @return
+     * @return 遞增後結果
      */
-    public long incr(String key, long delta);
+    long incr(String key, long delta);
+
+    /**
+     * 遞增
+     * @param key
+     * @return 遞增後結果
+     */
+    long incr(int db, String key);
+
+    /**
+     * 遞增
+     * @param key
+     * @return 遞增後結果
+     */
+    long incr(String key);
+
 
     /**
      * 遞減
@@ -106,5 +138,5 @@ public interface IRedisService {
      * @param delta
      * @return
      */
-    public long decr(String key, long delta);
+//    public long decr(String key, long delta);
 }
