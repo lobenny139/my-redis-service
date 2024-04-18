@@ -147,14 +147,20 @@ public class RedisService implements IRedisService {
     }
 
     @Override
-    public boolean hasKey(String key) {
+    public boolean hasKey(int db, String key) {
         try{
+            setDatabase(db);
             return getRedisTemplate().hasKey(key);
         }catch(RedisConnectionFailureException e){
             throw new RuntimeException("無法連接到redis服務器, " + e.toString());
         }catch(Exception e){
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public boolean hasKey(String key) {
+        return hasKey(0, key);
     }
 
     public  List<String> getAllKeys(int db){
@@ -167,9 +173,12 @@ public class RedisService implements IRedisService {
 
 
     @Override
-    public long incr(String key, long delta) {
+    public long incr(int db, String key, long delta) {
         try{
-            return getRedisTemplate().opsForValue().increment(key, delta);
+            setDatabase(db);
+            long result = getRedisTemplate().opsForValue().increment(key, delta);
+            logger.info("成功從Redis[{}]中以鍵值[{}]進行遞增, 遞增後的值為{}.", getDatabase(), key, result );
+            return result;
         }catch(RedisConnectionFailureException e){
             throw new RuntimeException("無法連接到redis服務器, " + e.toString());
         }catch(Exception e){
@@ -178,14 +187,20 @@ public class RedisService implements IRedisService {
     }
 
     @Override
-    public long decr(String key, long delta) {
-        try{
-            return getRedisTemplate().opsForValue().decrement(key, delta);
-        }catch(RedisConnectionFailureException e){
-            e.printStackTrace();
-            throw new RuntimeException("無法連接到redis服務器, " + e.toString());
-        }catch(Exception e){
-            throw new RuntimeException(e);
-        }
+    public long incr(String key, long delta){
+        return incr(0, key, delta);
     }
+
+    @Override
+    public long incr(int db, String key){
+        return incr(db, key, 1);
+    }
+
+    @Override
+    public long incr(String key){
+        return incr(0, key, 1);
+    }
+
+
+
 }
