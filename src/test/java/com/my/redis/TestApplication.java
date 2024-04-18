@@ -11,7 +11,8 @@ import org.springframework.context.annotation.Import;
 })
 
 @Import({
-        com.my.redis.RedisConfig.class
+        com.my.redis.config.RedisConfig.class,
+        com.my.redis.config.RedisServiceConfig.class
 })
 @SpringBootApplication
 public class TestApplication {
