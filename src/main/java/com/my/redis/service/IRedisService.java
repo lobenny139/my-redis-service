@@ -139,4 +139,12 @@ public interface IRedisService {
      * @return
      */
 //    public long decr(String key, long delta);
+
+    /**
+     *
+     * @param topic
+     * @param message
+     * @return
+     */
+    public boolean publish(String topic, String message);
 }

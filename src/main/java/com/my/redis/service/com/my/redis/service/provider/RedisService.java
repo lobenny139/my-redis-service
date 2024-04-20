@@ -202,5 +202,14 @@ public class RedisService implements IRedisService {
     }
 
 
+    @Override
+    public boolean publish(String topic, String message) {
+        try {
+            getRedisTemplate().convertAndSend(topic, message);
+            return true;
+        }catch(Exception e){
+            throw new RuntimeException(e);
+        }
+    }
 
 }

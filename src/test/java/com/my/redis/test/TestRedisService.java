@@ -65,7 +65,6 @@ public class TestRedisService {
 
 
     //------------------------------控管領獎--------------------------------------------------------
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss.SSS");
     @Test
     public void Test控管領獎() throws InterruptedException {
         System.out.println("搶票, 1000搶11");
@@ -79,6 +78,8 @@ public class TestRedisService {
     class MyThread implements Runnable {
         int maxCount;
         long startTime;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss.SSS");
+
         public MyThread(int max, long time){
             this.maxCount = max;
             this.startTime = time;
@@ -94,5 +95,15 @@ public class TestRedisService {
                 System.out.println(Thread.currentThread().getName() + " 在 " + simpleDateFormat.format(new Date(startTime)) + " 參加領獎, 在 " + simpleDateFormat.format(new Date(endTime) ) +   " 沒領到, 耗時 " +  (endTime - startTime) + "ms")  ;
             }
         }
+    }
+
+    @Test
+    public void TestPub() throws InterruptedException {
+        Thread.sleep(5000);
+        System.out.println(service.publish("demoChannel", "Hi"));
+        Thread.sleep(5000);
+        System.out.println(service.publish("demoChannel", "消息消息消息"));
+        Thread.sleep(5000);
+
     }
 }

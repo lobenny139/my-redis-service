@@ -1,7 +1,5 @@
 package com.my.redis.config;
 
-import com.my.redis.service.IRedisService;
-import com.my.redis.service.com.my.redis.service.provider.RedisService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -15,7 +13,7 @@ public class RedisConfig {
     /*
      * Redis连接工厂(redis db=0)
      */
-    @Bean
+    @Bean(name = "jedisConnectionFactory")
     public JedisConnectionFactory jedisConnectionFactory() {
         JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory();
         jedisConnectionFactory.setDatabase(0);
@@ -29,10 +27,10 @@ public class RedisConfig {
      */
     @Primary
     @Bean(name = "redisTemplate")
-    public RedisTemplate<String, Object> redisTemplate0( ) {
+    public RedisTemplate<String, Object> redisTemplate() {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         //redis db=0
-        template.setConnectionFactory( jedisConnectionFactory() );
+        template.setConnectionFactory( this.jedisConnectionFactory() );
         //
         StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
         template.setKeySerializer(stringRedisSerializer);
