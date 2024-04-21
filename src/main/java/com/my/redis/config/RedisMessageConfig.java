@@ -21,7 +21,6 @@ public class RedisMessageConfig {
      * @return
      */
     @Bean
-//    public RedisMessageListenerContainer listenerContainer(RedisConnectionFactory redisConnectionFactory) {
     public RedisMessageListenerContainer listenerContainer() {
         // 創建RedisMessageListenerContainer對象
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
@@ -29,7 +28,6 @@ public class RedisMessageConfig {
         container.setConnectionFactory(jedisConnectionFactory);
         // 添加監聽器
         container.addMessageListener(new SubscriberListener(), new ChannelTopic("demoChannel"));
-//        container.addMessageListener(new DemoPatternTopicMessageListener(), new ChannelTopic("demoPattern"));
         return container;
     }
 
