@@ -10,7 +10,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 @RunWith(SpringRunner.class)
@@ -19,7 +18,6 @@ import java.util.Date;
 public class TestRedisService {
 
     @Autowired(required = true)
-//    @Qualifier("memberService")
     private IRedisService service;
 
     @Test
