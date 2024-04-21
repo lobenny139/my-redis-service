@@ -1,7 +1,5 @@
 package com.my.redis.service;
 
-import org.springframework.context.annotation.Bean;
-
 import java.util.List;
 
 
