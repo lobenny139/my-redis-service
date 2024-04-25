@@ -68,11 +68,11 @@ public class RedisService implements IRedisService {
             setDatabase(db);
             if (time > 0) {
                 getRedisTemplate().opsForValue().set(key, value, time, TimeUnit.SECONDS);
-                logger.info("鍵[{}]的有效期為 {} 秒後", key, time);
             }else{
                 getRedisTemplate().opsForValue().set(key, value);
             }
             logger.info("成功放入[{}:{}]到Redis[{}]", key, value, getDatabase());
+            logger.info("鍵[{}]的有效期為 {} 秒後", key, time != 0 ? time : 0);
             return true;
         } catch(RedisConnectionFailureException e){
             throw new RuntimeException("無法連接到redis服務器, " + e.toString());
